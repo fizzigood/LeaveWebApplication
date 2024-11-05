@@ -1,0 +1,70 @@
+﻿@model IEnumerable<LeaveWebApplication.Models.LeaveRequest>
+
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/LeaveRequests/Index.cshtml";
+}
+
+<h1>Search</h1>
+
+<form method="get" asp-action="Search">
+    <div class="form-group">
+        <label for="employeeName">Employee Name:</label>
+        <input type="text" name="employeeName" id="employeeName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="month">Month:</label>
+        <input type="number" name="month" id="month" class="form-control" min="1" max="12" />
+    </div>
+    <div class="form-group">
+        <label for="year">Year:</label>
+        <select name="year" id="year" class="form-control">
+            @for (int i = DateTime.Now.Year - 5; i <= DateTime.Now.Year + 5; i++)
+            {
+                <option value="@i">@i</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.EndDate)</th>
+            <th>@Html.DisplayNameFor(model => model.ApplicationDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Employee.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.LeaveType.LeaveName)</th>
+            <th>Total Days</th> 
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">No leave requests found.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ApplicationDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Employee.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.LeaveType.LeaveName)</td>
+                    <td>@((item.EndDate - item.StartDate).Days + 1)</td> 
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.RequestId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.RequestId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.RequestId">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
